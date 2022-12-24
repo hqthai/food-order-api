@@ -1,14 +1,14 @@
 const db = require('../config/db')
-class OrderController {
-    async getOrderDetail(req, res){
+class FoodController {
+    async getFoodsByStoreID(req, res){
         try {
             // make sure that any items are correctly URL encoded in the connection string
             let pool = await db.db
-            let orderID = req.params.id
+            let storeID = req.params.id
             let stores = await pool.request().query(`
-            select m.TenMon, ctdh.SoLuong, m.Gia      
-            from CHITIETDONDATHANG ctdh join MONAN m on ctdh.MaMonID = m.MaMonID join DONDATHANG dh on dh.MaDonHangID = ctdh.MaDonHangID 
-            where dh.MaDonHang = '${orderID}'
+            select m.TenMon, m.TinhTrangMon, m .Gia
+            from CUAHANG ch join THUCDON td on td.MaCuaHangID = ch.MaCuaHangID join MONAN m on m.MaThucDonID = td.MaThucDonID
+            where ch.MaCuaHang = '${storeID}'
             `)
             res.json(stores.recordsets[0])
         } catch (err) {
@@ -16,20 +16,17 @@ class OrderController {
         }
     }
 
-    async getOrdersByCustomerId(req, res){
-        try {
-            // make sure that any items are correctly URL encoded in the connection string
-            let pool = await db.db
-            let customerID = req.params.id
-            let store = await pool.request().query(`
-            select kh.HoTen, ch.TenCuaHang, dh.DiaChiGiaoHang, kh.SDT, dh.NgayDat, dh.TongTien
-            from DONDATHANG dh join KHACHHANG kh on dh.MaKhachHangID = kh.MaKhachHangID join CUAHANG ch on dh.MaCuaHangID = ch.MaCuaHangID
-            where kh.MaKhachHang = '${customerID}'`)
-            res.json(store.recordsets[0])
-        } catch (err) {
-            console.log(err)
-        }
-    }
+    // async getOrdersByPartnerId(req, res){
+    //     try {
+    //         // make sure that any items are correctly URL encoded in the connection string
+    //         let pool = await db.db
+    //         let storeID = req.params.id
+    //         let store = await pool.request().query(`select * from CUA_HANG where ID_CuaHang = '${storeID}'`)
+    //         res.json(store.recordsets[0])
+    //     } catch (err) {
+    //         console.log(err)
+    //     }
+    // }
     
     // async addOrder(req, res){
     //     try {
@@ -48,4 +45,4 @@ class OrderController {
     // }
 }
 
-module.exports = new OrderController()
+module.exports = new FoodController()

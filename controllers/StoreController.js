@@ -4,7 +4,7 @@ class StoreController {
         try {
             // make sure that any items are correctly URL encoded in the connection string
             let pool = await db.db
-            let stores = await pool.request().query('select * from CUA_HANG')
+            let stores = await pool.request().query('select * from CUAHANG')
             res.json(stores.recordsets[0])
         } catch (err) {
             console.log(err)
@@ -16,11 +16,12 @@ class StoreController {
             // make sure that any items are correctly URL encoded in the connection string
             let pool = await db.db
             let PartnerID = req.params.id
-            let orders = await pool.request().query(`
-            select ch.TENCUAHANG, ctdh. TENMON, ctdh.SOLUONG, dh.THANHTIEN, dh.PHIVANCHUYEN, dh.THANHTIEN
-            from DONDATHANG dh join CHITIETDONDATHANG ctdh on dh.MADONHANG = ctdh.MADONHANG join CUAHANG ch on ch.MACUAHANG = dh.MACUAHANG
-            where ch.MADOITAC = '${PartnerID}'`)
-            res.json(orders.recordsets[0])
+            let stores = await pool.request().query(`
+            select ch.TenCuaHang, ch.ThoiGianHoatDong, ch.TinhTrang, ch.DoanhThu
+            from CUAHANG ch join DOITAC dt on dt.MaDoiTacID = ch.MaDoiTacID
+            where dt.MaDoiTac = '${PartnerID}'
+            `)
+            res.json(stores.recordsets[0])
         } catch (err) {
             console.log(err)
         }
